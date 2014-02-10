@@ -108,6 +108,10 @@ class cookieControl extends CApplicationComponent
         /* evaluate the options */
         $this->setOptions();
 
+        /* Explicitly ask users that have the DoNotTrack header */
+        if ($this->getDntStatus())
+            $this->_cookieOptions['consentModel'] = 'CookieControl.MODEL_EXPLICIT';
+        
         /* Is the cookie already set? */
         $name = $this->_cookieOptions['cookieName'];
         if (isset(Yii::app()->request->cookies[$name]))
@@ -257,6 +261,15 @@ class cookieControl extends CApplicationComponent
             return true;
         }
         return false;
+    }
+    
+    /**
+    * Get status the DNT header for the current request.
+    * @return boolean whether DNT: 1 header is present
+    */
+    function getDntStatus() 
+    {        
+        return (isset($_SERVER['HTTP_DNT']) && $_SERVER['HTTP_DNT'] == 1);
     }
     
     /**
